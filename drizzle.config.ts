@@ -8,5 +8,11 @@ export default {
 	dbCredentials: {
 		url: env.DATABASE_URL,
 	},
-	tablesFilter: ["tender-management_*"],
+	tablesFilter: [
+		"pg-drizzle_*",
+		"user",
+		"session",
+		"account",
+		"verification",
+	],
 } satisfies Config;

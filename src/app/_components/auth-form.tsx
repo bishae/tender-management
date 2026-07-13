@@ -6,17 +6,28 @@ import { useState } from "react";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { authClient } from "~/server/better-auth/client";
+import { api } from "~/trpc/react";
 
 type Mode = "signin" | "signup";
 
+const fieldClass =
+	"h-10 border-white/15 bg-white/5 text-white placeholder:text-[var(--zg-mist)]/40 focus-visible:border-[var(--zg-accent)] focus-visible:ring-[var(--zg-accent)]/30 dark:bg-white/5";
+
 export function AuthForm() {
 	const router = useRouter();
+	const utils = api.useUtils();
 	const [mode, setMode] = useState<Mode>("signin");
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [pending, setPending] = useState(false);
+
+	async function routeAfterAuth() {
+		const path = await utils.org.dashboardPath.fetch();
+		router.push(path);
+		router.refresh();
+	}
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
 		e.preventDefault();
@@ -29,31 +40,28 @@ export function AuthForm() {
 					name,
 					email,
 					password,
-					callbackURL: "/login",
 				});
 				if (signUpError) {
 					setError(signUpError.message ?? "Sign up failed");
 					return;
 				}
-			} else {
-				const { error: signInError } = await authClient.signIn.email({
-					email,
-					password,
-					callbackURL: "/login",
-				});
-				if (signInError) {
-					setError(signInError.message ?? "Sign in failed");
-					return;
-				}
+				await routeAfterAuth();
+				return;
 			}
-			router.refresh();
+
+			const { error: signInError } = await authClient.signIn.email({
+				email,
+				password,
+			});
+			if (signInError) {
+				setError(signInError.message ?? "Sign in failed");
+				return;
+			}
+			await routeAfterAuth();
 		} finally {
 			setPending(false);
 		}
 	}
-
-	const fieldClass =
-		"h-10 border-white/15 bg-white/5 text-white placeholder:text-[var(--zg-mist)]/40 focus-visible:border-[var(--zg-accent)] focus-visible:ring-[var(--zg-accent)]/30 dark:bg-white/5";
 
 	return (
 		<div className="w-full">

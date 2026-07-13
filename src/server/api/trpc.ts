@@ -11,6 +11,15 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
+import {
+	isBuyerMembership,
+	isVendorMembership,
+	type UserMembership,
+} from "~/lib/org";
+import {
+	getUserMembership,
+	isPlatformAdminUser,
+} from "~/server/auth/membership";
 import { auth } from "~/server/better-auth";
 import { db } from "~/server/db";
 
@@ -132,3 +141,68 @@ export const protectedProcedure = t.procedure
 			},
 		});
 	});
+
+async function withMembership(userId: string): Promise<UserMembership | null> {
+	return getUserMembership(userId);
+}
+
+/**
+ * Buyer organization members (creator portal).
+ */
+export const buyerProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+	const membership = await withMembership(ctx.session.user.id);
+	if (!isBuyerMembership(membership)) {
+		throw new TRPCError({
+			code: "FORBIDDEN",
+			message: "Buyer organization access required",
+		});
+	}
+	return next({
+		ctx: {
+			membership: membership!,
+		},
+	});
+});
+
+/**
+ * Vendor organization members (bidder portal).
+ */
+export const vendorProcedure = protectedProcedure.use(async ({ ctx, next }) => {
+	const membership = await withMembership(ctx.session.user.id);
+	if (!isVendorMembership(membership)) {
+		throw new TRPCError({
+			code: "FORBIDDEN",
+			message: "Vendor organization access required",
+		});
+	}
+	return next({
+		ctx: {
+			membership: membership!,
+		},
+	});
+});
+
+/**
+ * Platform admin procedure.
+ */
+export const platformAdminProcedure = protectedProcedure.use(
+	async ({ ctx, next }) => {
+		const isAdmin = await isPlatformAdminUser(ctx.session.user.id);
+		if (!isAdmin) {
+			throw new TRPCError({
+				code: "FORBIDDEN",
+				message: "Platform admin access required",
+			});
+		}
+		return next({
+			ctx: {
+				isPlatformAdmin: true as const,
+			},
+		});
+	},
+);
+
+/** @deprecated use buyerProcedure */
+export const creatorProcedure = buyerProcedure;
+/** @deprecated use vendorProcedure */
+export const bidderProcedure = vendorProcedure;

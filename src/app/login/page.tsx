@@ -1,13 +1,16 @@
-import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AuthForm } from "~/app/_components/auth-form";
-import { auth } from "~/server/better-auth";
+import { resolveDashboardPath } from "~/server/auth/membership";
 import { getSession } from "~/server/better-auth/server";
 
 export default async function LoginPage() {
 	const session = await getSession();
+
+	if (session?.user) {
+		redirect(await resolveDashboardPath(session.user.id));
+	}
 
 	return (
 		<main className="zg-surface zg-orbit relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16">
@@ -32,36 +35,12 @@ export default async function LoginPage() {
 						Smart Tender Management
 					</h1>
 					<p className="mt-3 text-[var(--zg-mist)]/50 text-sm">
-						Sign in to access the procurement portal.
+						Sign in with your organization email to access the portal.
 					</p>
 				</div>
 
 				<div className="zg-fade-up mt-10">
-					{session ? (
-						<div className="flex flex-col gap-4">
-							<p className="text-[var(--zg-mist)]/80">
-								Signed in as{" "}
-								<span className="text-white">{session.user?.name}</span>
-							</p>
-							<form>
-								<button
-									className="inline-flex h-10 w-full items-center justify-center rounded-lg border border-white/15 bg-white/5 px-4 font-medium text-sm text-white transition hover:bg-white/10"
-									formAction={async () => {
-										"use server";
-										await auth.api.signOut({
-											headers: await headers(),
-										});
-										redirect("/login");
-									}}
-									type="submit"
-								>
-									Sign out
-								</button>
-							</form>
-						</div>
-					) : (
-						<AuthForm />
-					)}
+					<AuthForm />
 				</div>
 			</div>
 		</main>

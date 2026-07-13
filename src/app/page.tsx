@@ -1,9 +1,13 @@
 import Link from "next/link";
 
+import { resolveDashboardPath } from "~/server/auth/membership";
 import { getSession } from "~/server/better-auth/server";
 
 export default async function Home() {
 	const session = await getSession();
+	const portalHref = session?.user
+		? await resolveDashboardPath(session.user.id)
+		: "/login";
 
 	return (
 		<main className="zg-surface zg-orbit relative min-h-screen overflow-x-hidden">
@@ -18,7 +22,7 @@ export default async function Home() {
 				</span>
 				<Link
 					className="text-[var(--zg-mist)]/90 text-sm underline-offset-4 transition hover:text-white hover:underline"
-					href="/login"
+					href={portalHref}
 				>
 					{session ? "Open portal" : "Sign in"}
 				</Link>
@@ -40,7 +44,7 @@ export default async function Home() {
 					<div className="zg-fade-up-delay-2 mt-10 flex flex-wrap items-center gap-4">
 						<Link
 							className="inline-flex h-11 items-center justify-center rounded-lg bg-[var(--zg-accent)] px-6 font-medium text-sm text-white transition hover:bg-[var(--zg-steel)]"
-							href="/login"
+							href={portalHref}
 						>
 							{session ? "Open portal" : "Sign in"}
 						</Link>
@@ -165,7 +169,7 @@ export default async function Home() {
 					</div>
 					<Link
 						className="text-[var(--zg-steel)] text-sm transition hover:text-white"
-						href="/login"
+						href={portalHref}
 					>
 						{session ? "Open portal" : "Sign in to the portal"}
 					</Link>
