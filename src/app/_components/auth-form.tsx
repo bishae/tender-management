@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { authClient } from "~/server/better-auth/client";
 
 type Mode = "signin" | "signup";
@@ -27,7 +29,7 @@ export function AuthForm() {
 					name,
 					email,
 					password,
-					callbackURL: "/",
+					callbackURL: "/login",
 				});
 				if (signUpError) {
 					setError(signUpError.message ?? "Sign up failed");
@@ -37,7 +39,7 @@ export function AuthForm() {
 				const { error: signInError } = await authClient.signIn.email({
 					email,
 					password,
-					callbackURL: "/",
+					callbackURL: "/login",
 				});
 				if (signInError) {
 					setError(signInError.message ?? "Sign in failed");
@@ -50,12 +52,15 @@ export function AuthForm() {
 		}
 	}
 
+	const fieldClass =
+		"h-10 border-white/15 bg-white/5 text-white placeholder:text-[var(--zg-mist)]/40 focus-visible:border-[var(--zg-accent)] focus-visible:ring-[var(--zg-accent)]/30 dark:bg-white/5";
+
 	return (
-		<div className="w-full max-w-xs">
+		<div className="w-full">
 			<form className="flex flex-col gap-3" onSubmit={handleSubmit}>
 				{mode === "signup" && (
-					<input
-						className="w-full rounded-full bg-white/10 px-4 py-2 text-white placeholder:text-white/50"
+					<Input
+						className={fieldClass}
 						onChange={(e) => setName(e.target.value)}
 						placeholder="Name"
 						required
@@ -63,18 +68,18 @@ export function AuthForm() {
 						value={name}
 					/>
 				)}
-				<input
+				<Input
 					autoComplete="email"
-					className="w-full rounded-full bg-white/10 px-4 py-2 text-white placeholder:text-white/50"
+					className={fieldClass}
 					onChange={(e) => setEmail(e.target.value)}
 					placeholder="Email"
 					required
 					type="email"
 					value={email}
 				/>
-				<input
+				<Input
 					autoComplete={mode === "signup" ? "new-password" : "current-password"}
-					className="w-full rounded-full bg-white/10 px-4 py-2 text-white placeholder:text-white/50"
+					className={fieldClass}
 					minLength={8}
 					onChange={(e) => setPassword(e.target.value)}
 					placeholder="Password"
@@ -87,8 +92,8 @@ export function AuthForm() {
 						{error}
 					</p>
 				)}
-				<button
-					className="rounded-full bg-white/10 px-10 py-3 font-semibold transition hover:bg-white/20 disabled:opacity-50"
+				<Button
+					className="mt-1 h-10 w-full bg-[var(--zg-accent)] text-white hover:bg-[var(--zg-steel)]"
 					disabled={pending}
 					type="submit"
 				>
@@ -97,14 +102,14 @@ export function AuthForm() {
 						: mode === "signin"
 							? "Sign in"
 							: "Sign up"}
-				</button>
+				</Button>
 			</form>
-			<p className="mt-4 text-center text-sm text-white/70">
+			<p className="mt-4 text-center text-[var(--zg-mist)]/60 text-sm">
 				{mode === "signin" ? (
 					<>
 						Don&apos;t have an account?{" "}
 						<button
-							className="underline transition hover:text-white"
+							className="text-white underline-offset-4 transition hover:underline"
 							onClick={() => {
 								setMode("signup");
 								setError(null);
@@ -118,7 +123,7 @@ export function AuthForm() {
 					<>
 						Already have an account?{" "}
 						<button
-							className="underline transition hover:text-white"
+							className="text-white underline-offset-4 transition hover:underline"
 							onClick={() => {
 								setMode("signin");
 								setError(null);
