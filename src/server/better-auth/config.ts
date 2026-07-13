@@ -11,13 +11,30 @@ import {
 	user,
 } from "~/server/db/schema";
 
+const microsoftClientId = env.MICROSOFT_CLIENT_ID;
+const microsoftClientSecret = env.MICROSOFT_CLIENT_SECRET;
+const microsoftTenantId = env.MICROSOFT_TENANT_ID;
+
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
 	}),
+	...(env.BETTER_AUTH_URL ? { baseURL: env.BETTER_AUTH_URL } : {}),
 	emailAndPassword: {
 		enabled: true,
 	},
+	...(microsoftClientId && microsoftClientSecret && microsoftTenantId
+		? {
+				socialProviders: {
+					microsoft: {
+						clientId: microsoftClientId,
+						clientSecret: microsoftClientSecret,
+						tenantId: microsoftTenantId,
+						prompt: "select_account" as const,
+					},
+				},
+			}
+		: {}),
 	user: {
 		additionalFields: {
 			isPlatformAdmin: {

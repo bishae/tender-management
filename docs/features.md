@@ -25,7 +25,7 @@ Feature catalog for the Zero Gravity Smart Tender Management System (dual-scenar
 
 ## Tender Creator workflow (Buyer)
 
-- Secure authentication (email/password; OAuth planned)
+- Secure authentication (email/password and Microsoft Entra ID SSO)
 - Tender initiation from the creator dashboard
 - Configuration: requirements, timelines, and evaluation rules
 - Configurable ordered approval chain: select which groups must approve and in what order

@@ -22,11 +22,30 @@ export function AuthForm() {
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [pending, setPending] = useState(false);
+	const [microsoftPending, setMicrosoftPending] = useState(false);
 
 	async function routeAfterAuth() {
 		const path = await utils.org.dashboardPath.fetch();
 		router.push(path);
 		router.refresh();
+	}
+
+	async function handleMicrosoftSignIn() {
+		setError(null);
+		setMicrosoftPending(true);
+		try {
+			const { error: microsoftError } = await authClient.signIn.social({
+				provider: "microsoft",
+				callbackURL: "/login",
+			});
+			if (microsoftError) {
+				setError(microsoftError.message ?? "Microsoft sign in failed");
+				setMicrosoftPending(false);
+			}
+		} catch {
+			setError("Microsoft sign in failed");
+			setMicrosoftPending(false);
+		}
 	}
 
 	async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -63,8 +82,28 @@ export function AuthForm() {
 		}
 	}
 
+	const busy = pending || microsoftPending;
+
 	return (
 		<div className="w-full">
+			<Button
+				className="h-10 w-full border-white/15 bg-white/5 text-white hover:bg-white/10"
+				disabled={busy}
+				onClick={handleMicrosoftSignIn}
+				type="button"
+				variant="outline"
+			>
+				{microsoftPending ? "Redirecting..." : "Sign in with Microsoft"}
+			</Button>
+
+			<div className="my-5 flex items-center gap-3">
+				<div className="h-px flex-1 bg-white/10" />
+				<span className="text-[var(--zg-mist)]/40 text-xs uppercase tracking-wider">
+					or
+				</span>
+				<div className="h-px flex-1 bg-white/10" />
+			</div>
+
 			<form className="flex flex-col gap-3" onSubmit={handleSubmit}>
 				{mode === "signup" && (
 					<Input
@@ -102,7 +141,7 @@ export function AuthForm() {
 				)}
 				<Button
 					className="mt-1 h-10 w-full bg-[var(--zg-accent)] text-white hover:bg-[var(--zg-steel)]"
-					disabled={pending}
+					disabled={busy}
 					type="submit"
 				>
 					{pending

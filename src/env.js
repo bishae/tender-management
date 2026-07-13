@@ -11,7 +11,14 @@ export const env = createEnv({
 			process.env.NODE_ENV === "production"
 				? z.string()
 				: z.string().optional(),
+		BETTER_AUTH_URL:
+			process.env.NODE_ENV === "production"
+				? z.string().url()
+				: z.string().url().optional(),
 		DATABASE_URL: z.string().url(),
+		MICROSOFT_CLIENT_ID: z.string().min(1).optional(),
+		MICROSOFT_CLIENT_SECRET: z.string().min(1).optional(),
+		MICROSOFT_TENANT_ID: z.string().min(1).optional(),
 		PLATFORM_ADMIN_EMAIL: z.string().email().optional(),
 		NODE_ENV: z
 			.enum(["development", "test", "production"])
@@ -33,7 +40,11 @@ export const env = createEnv({
 	 */
 	runtimeEnv: {
 		BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+		BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
 		DATABASE_URL: process.env.DATABASE_URL,
+		MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
+		MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
+		MICROSOFT_TENANT_ID: process.env.MICROSOFT_TENANT_ID,
 		PLATFORM_ADMIN_EMAIL: process.env.PLATFORM_ADMIN_EMAIL,
 		NODE_ENV: process.env.NODE_ENV,
 	},
