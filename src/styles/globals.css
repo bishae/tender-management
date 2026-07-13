@@ -6,16 +6,16 @@
 
 @theme {
 	--font-sans:
-		var(--font-outfit), ui-sans-serif, system-ui, sans-serif,
+		var(--font-noto-sans), ui-sans-serif, system-ui, sans-serif,
 		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 	--font-display:
-		var(--font-syne), var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+		var(--font-noto-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 @theme inline {
-	--font-heading: var(--font-display);
+	--font-heading: var(--font-sans);
 	--font-sans: var(--font-sans);
-	--font-display: var(--font-display);
+	--font-display: var(--font-sans);
 	--color-sidebar-ring: var(--sidebar-ring);
 	--color-sidebar-border: var(--sidebar-border);
 	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -140,7 +140,7 @@
 /* Zero Gravity landing atmosphere */
 @layer utilities {
 	.font-display {
-		font-family: var(--font-display);
+		font-family: var(--font-sans);
 	}
 
 	.zg-surface {

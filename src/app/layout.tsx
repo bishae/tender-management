@@ -1,7 +1,7 @@
 import "~/styles/globals.css";
 
 import type { Metadata } from "next";
-import { Outfit, Syne } from "next/font/google";
+import { Noto_Sans } from "next/font/google";
 import { TooltipProvider } from "~/components/ui/tooltip";
 import { TRPCReactProvider } from "~/trpc/react";
 
@@ -12,21 +12,16 @@ export const metadata: Metadata = {
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-const outfit = Outfit({
+const notoSans = Noto_Sans({
 	subsets: ["latin"],
-	variable: "--font-outfit",
-});
-
-const syne = Syne({
-	subsets: ["latin"],
-	variable: "--font-syne",
+	variable: "--font-noto-sans",
 });
 
 export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
 	return (
-		<html className={`${outfit.variable} ${syne.variable}`} lang="en">
+		<html className={notoSans.variable} lang="en">
 			<body>
 				<TooltipProvider>
 					<TRPCReactProvider>{children}</TRPCReactProvider>
