@@ -9,6 +9,9 @@ function oauthErrorMessage(code: string): string {
 	if (code === "invalid_code") {
 		return "Microsoft sign-in failed. Check that BETTER_AUTH_URL and the Entra redirect URI match this app URL exactly.";
 	}
+	if (code === "account_not_linked") {
+		return "Microsoft sign-in failed. This email already has an account that could not be linked. Try again after redeploying, or sign in with email/password.";
+	}
 	return `Sign-in failed (${code}). Please try again.`;
 }
 

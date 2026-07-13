@@ -41,6 +41,12 @@ export const auth = betterAuth({
 	emailAndPassword: {
 		enabled: true,
 	},
+	account: {
+		accountLinking: {
+			enabled: true,
+			trustedProviders: ["microsoft"],
+		},
+	},
 	...(microsoftClientId && microsoftClientSecret && microsoftTenantId
 		? {
 				socialProviders: {

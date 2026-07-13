@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Microsoft SSO `invalid_code` on Vercel by aligning Better Auth `baseURL`, trusted origins, and Entra redirect URI
+- Microsoft SSO `account_not_linked` by trusting Microsoft for automatic account linking on matching email
 
 ### Removed
 
