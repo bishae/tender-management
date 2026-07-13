@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Portal access is driven by organization membership instead of a signup role picker or hard-coded L1–L3 user roles
+- Creator, admin, and bidder portals use a collapsible sidebar instead of a top navigation bar
 
 ### Removed
 
