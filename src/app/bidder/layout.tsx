@@ -26,7 +26,10 @@ export default async function BidderLayout({
 	}
 
 	const isAdmin = await isPlatformAdminUser(session.user.id);
-	const nav = [{ href: "/bidder", label: "Discover" }];
+	const nav = [
+		{ href: "/bidder", label: "Discover" },
+		{ href: "/settings", label: "Settings" },
+	];
 	if (isAdmin) {
 		nav.push({ href: "/admin", label: "Admin" });
 	}

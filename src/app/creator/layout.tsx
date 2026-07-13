@@ -30,6 +30,7 @@ export default async function CreatorLayout({
 		{ href: "/creator", label: "My tenders" },
 		{ href: "/creator/new", label: "New tender" },
 		{ href: "/creator/approvals", label: "Approvals" },
+		{ href: "/settings", label: "Settings" },
 	];
 	if (isAdmin) {
 		nav.push({ href: "/admin", label: "Admin" });

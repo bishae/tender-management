@@ -28,6 +28,7 @@ export default async function AdminLayout({
 	const nav = [
 		{ href: "/admin", label: "Organizations" },
 		{ href: "/admin/users", label: "Users" },
+		{ href: "/settings", label: "Settings" },
 	];
 	if (membership?.organizationType === "buyer") {
 		nav.push({ href: "/creator", label: "Creator portal" });

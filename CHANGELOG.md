@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Settings page (`/settings`) to link or unlink Microsoft Entra ID from an authenticated account
 - Microsoft Entra ID SSO via Better Auth (`socialProviders.microsoft`)
 - Landing page and Better Auth email/password authentication
 - Buyer and Vendor organizations with domains, members, and groups

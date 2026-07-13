@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { SignOutButton } from "~/app/_components/sign-out-button";
@@ -40,7 +41,13 @@ export default async function PendingPage() {
 					domain is not registered to an organization yet. A platform admin must
 					attach your account before you can open the Buyer or Vendor portal.
 				</p>
-				<div className="mt-10 flex justify-center">
+				<div className="mt-10 flex flex-col items-center gap-4">
+					<Link
+						className="text-[var(--zg-mist)]/70 text-sm underline-offset-4 transition hover:text-white hover:underline"
+						href="/settings"
+					>
+						Account settings
+					</Link>
 					<SignOutButton />
 				</div>
 			</div>
