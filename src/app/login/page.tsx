@@ -5,12 +5,26 @@ import { AuthForm } from "~/app/_components/auth-form";
 import { resolveDashboardPath } from "~/server/auth/membership";
 import { getSession } from "~/server/better-auth/server";
 
-export default async function LoginPage() {
+function oauthErrorMessage(code: string): string {
+	if (code === "invalid_code") {
+		return "Microsoft sign-in failed. Check that BETTER_AUTH_URL and the Entra redirect URI match this app URL exactly.";
+	}
+	return `Sign-in failed (${code}). Please try again.`;
+}
+
+export default async function LoginPage({
+	searchParams,
+}: {
+	searchParams: Promise<{ error?: string }>;
+}) {
 	const session = await getSession();
 
 	if (session?.user) {
 		redirect(await resolveDashboardPath(session.user.id));
 	}
+
+	const { error } = await searchParams;
+	const oauthError = error ? oauthErrorMessage(error) : null;
 
 	return (
 		<main className="zg-surface zg-orbit relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-6 py-16">
@@ -38,6 +52,15 @@ export default async function LoginPage() {
 						Sign in with your organization email to access the portal.
 					</p>
 				</div>
+
+				{oauthError && (
+					<p
+						className="zg-fade-in mt-6 text-center text-red-300 text-sm"
+						role="alert"
+					>
+						{oauthError}
+					</p>
+				)}
 
 				<div className="zg-fade-up mt-10">
 					<AuthForm />

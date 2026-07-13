@@ -11,15 +11,33 @@ import {
 	user,
 } from "~/server/db/schema";
 
+function resolveBaseURL(): string | undefined {
+	if (env.BETTER_AUTH_URL) {
+		return env.BETTER_AUTH_URL.replace(/\/$/, "");
+	}
+	if (process.env.VERCEL_URL) {
+		return `https://${process.env.VERCEL_URL.replace(/\/$/, "")}`;
+	}
+	return undefined;
+}
+
+const baseURL = resolveBaseURL();
+
 const microsoftClientId = env.MICROSOFT_CLIENT_ID;
 const microsoftClientSecret = env.MICROSOFT_CLIENT_SECRET;
 const microsoftTenantId = env.MICROSOFT_TENANT_ID;
+
+const trustedOrigins = [
+	"http://localhost:3000",
+	...(baseURL ? [baseURL] : []),
+];
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
 		provider: "pg",
 	}),
-	...(env.BETTER_AUTH_URL ? { baseURL: env.BETTER_AUTH_URL } : {}),
+	...(baseURL ? { baseURL } : {}),
+	trustedOrigins,
 	emailAndPassword: {
 		enabled: true,
 	},
@@ -31,6 +49,11 @@ export const auth = betterAuth({
 						clientSecret: microsoftClientSecret,
 						tenantId: microsoftTenantId,
 						prompt: "select_account" as const,
+						...(baseURL
+							? {
+									redirectURI: `${baseURL}/api/auth/callback/microsoft`,
+								}
+							: {}),
 					},
 				},
 			}

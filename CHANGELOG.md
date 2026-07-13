@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - App typography now uses Noto Sans instead of Outfit and Syne
 - UI component headings use the same Noto Sans font as the rest of the app
 
+### Fixed
+
+- Microsoft SSO `invalid_code` on Vercel by aligning Better Auth `baseURL`, trusted origins, and Entra redirect URI
+
 ### Removed
 
 - Per-user `role` field and signup role selection

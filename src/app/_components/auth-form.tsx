@@ -37,6 +37,7 @@ export function AuthForm() {
 			const { error: microsoftError } = await authClient.signIn.social({
 				provider: "microsoft",
 				callbackURL: "/login",
+				errorCallbackURL: "/login",
 			});
 			if (microsoftError) {
 				setError(microsoftError.message ?? "Microsoft sign in failed");
