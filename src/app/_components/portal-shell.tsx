@@ -3,6 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { CSSProperties, ReactNode } from "react";
+import type { LucideIcon } from "lucide-react";
+import {
+	ArrowLeft,
+	BadgeCheck,
+	Building2,
+	ClipboardList,
+	Compass,
+	FilePlus,
+	Settings,
+	Users,
+} from "lucide-react";
 
 import { SignOutButton } from "~/app/_components/sign-out-button";
 import {
@@ -27,6 +38,26 @@ type NavItem = {
 	label: string;
 };
 
+const NAV_ICONS: Record<string, LucideIcon> = {
+	"/creator": ClipboardList,
+	"/creator/new": FilePlus,
+	"/creator/approvals": BadgeCheck,
+	"/bidder": Compass,
+	"/settings": Settings,
+	"/admin": Building2,
+	"/admin/users": Users,
+};
+
+function resolveNavIcon(href: string, label: string): LucideIcon {
+	if (NAV_ICONS[href]) {
+		return NAV_ICONS[href];
+	}
+	if (label.toLowerCase().includes("back")) {
+		return ArrowLeft;
+	}
+	return ClipboardList;
+}
+
 function isNavActive(pathname: string, href: string) {
 	return pathname === href;
 }
@@ -36,7 +67,7 @@ const sidebarTokenStyle = {
 	"--sidebar-foreground": "#c5d4e3",
 	"--sidebar-primary": "#3d7ea6",
 	"--sidebar-primary-foreground": "#ffffff",
-	"--sidebar-accent": "rgb(255 255 255 / 0.08)",
+	"--sidebar-accent": "rgb(255 255 255 / 0.1)",
 	"--sidebar-accent-foreground": "#ffffff",
 	"--sidebar-border": "rgb(255 255 255 / 0.1)",
 	"--sidebar-ring": "#3d7ea6",
@@ -66,12 +97,17 @@ export function PortalShell({
 			/>
 
 			<Sidebar className="border-white/10" collapsible="icon">
-				<SidebarHeader className="gap-1 border-white/10 border-b px-3 py-4">
+				<SidebarHeader className="gap-1.5 border-white/10 border-b px-3 py-4">
 					<Link
-						className="font-display text-[var(--zg-mist)]/70 text-xs uppercase tracking-[0.2em] transition hover:text-white"
+						className="font-display text-[var(--zg-mist)]/70 text-xs uppercase tracking-[0.2em] transition hover:text-white group-data-[collapsible=icon]:tracking-[0.12em]"
 						href="/"
 					>
-						Zero Gravity
+						<span className="group-data-[collapsible=icon]:hidden">
+							Zero Gravity
+						</span>
+						<span className="hidden group-data-[collapsible=icon]:inline">
+							ZG
+						</span>
 					</Link>
 					<p className="font-display text-lg text-white tracking-tight group-data-[collapsible=icon]:hidden">
 						{title}
@@ -79,20 +115,25 @@ export function PortalShell({
 				</SidebarHeader>
 
 				<SidebarContent>
-					<SidebarGroup>
+					<SidebarGroup className="px-2 py-2">
 						<SidebarGroupContent>
-							<SidebarMenu>
-								{nav.map((item) => (
-									<SidebarMenuItem key={item.href}>
-										<SidebarMenuButton
-											isActive={isNavActive(pathname, item.href)}
-											render={<Link href={item.href} />}
-											tooltip={item.label}
-										>
-											<span>{item.label}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-								))}
+							<SidebarMenu className="gap-1">
+								{nav.map((item) => {
+									const Icon = resolveNavIcon(item.href, item.label);
+									return (
+										<SidebarMenuItem key={item.href}>
+											<SidebarMenuButton
+												className="text-[var(--zg-mist)]/85 hover:text-white data-active:bg-white/12 data-active:text-white"
+												isActive={isNavActive(pathname, item.href)}
+												render={<Link href={item.href} />}
+												tooltip={item.label}
+											>
+												<Icon />
+												<span>{item.label}</span>
+											</SidebarMenuButton>
+										</SidebarMenuItem>
+									);
+								})}
 							</SidebarMenu>
 						</SidebarGroupContent>
 					</SidebarGroup>
@@ -102,7 +143,7 @@ export function PortalShell({
 					<p className="px-1 text-[var(--zg-mist)]/50 text-xs group-data-[collapsible=icon]:hidden">
 						{subtitle}
 					</p>
-					<SignOutButton />
+					<SignOutButton variant="sidebar" />
 				</SidebarFooter>
 				<SidebarRail />
 			</Sidebar>
